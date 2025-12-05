@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Flight.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.request</a> &gt; <span class="el_source">Flight.java</span></div><h1>Flight.java</h1><pre class="source lang-java linenums">package com.flightapp.request;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = &quot;flights&quot;)
+public class Flight {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    private String airline;
+
+    private String airlineLogoUrl;
+
+    @NotBlank
+    private String origin;
+
+    @NotBlank
+    private String destination;
+
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
+
+    @Min(1)
+    private int totalSeats;
+
+    @Min(0)
+    private int availableSeats;
+
+    private double price;
+
+<span class="fc" id="L39">    @ElementCollection</span>
+    @CollectionTable(name = &quot;flight_booked_seats&quot;, joinColumns = @JoinColumn(name = &quot;flight_id&quot;))
+    @Column(name = &quot;seat_number&quot;)
+    private Set&lt;Integer&gt; bookedSeats = new HashSet&lt;&gt;();
+
+<span class="fc" id="L44">    public Flight() {</span>
+    	// no-args constructor required for JPA
+<span class="fc" id="L46">    }</span>
+
+<span class="fc" id="L48">    public Long getId() { return id; }</span>
+<span class="fc" id="L49">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="fc" id="L51">    public String getAirline() { return airline; }</span>
+<span class="fc" id="L52">    public void setAirline(String airline) { this.airline = airline; }</span>
+
+<span class="fc" id="L54">    public String getAirlineLogoUrl() { return airlineLogoUrl; }</span>
+<span class="fc" id="L55">    public void setAirlineLogoUrl(String airlineLogoUrl) { this.airlineLogoUrl = airlineLogoUrl; }</span>
+
+<span class="fc" id="L57">    public String getOrigin() { return origin; }</span>
+<span class="fc" id="L58">    public void setOrigin(String origin) { this.origin = origin; }</span>
+
+<span class="fc" id="L60">    public String getDestination() { return destination; }</span>
+<span class="fc" id="L61">    public void setDestination(String destination) { this.destination = destination; }</span>
+
+<span class="fc" id="L63">    public LocalDateTime getDepartureTime() { return departureTime; }</span>
+<span class="fc" id="L64">    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }</span>
+
+<span class="fc" id="L66">    public LocalDateTime getArrivalTime() { return arrivalTime; }</span>
+<span class="fc" id="L67">    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }</span>
+
+<span class="fc" id="L69">    public int getTotalSeats() { return totalSeats; }</span>
+<span class="fc" id="L70">    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }</span>
+
+<span class="fc" id="L72">    public int getAvailableSeats() { return availableSeats; }</span>
+<span class="fc" id="L73">    public void setAvailableSeats(int availableSeats) { this.availableSeats = availableSeats; }</span>
+
+<span class="fc" id="L75">    public double getPrice() { return price; }</span>
+<span class="fc" id="L76">    public void setPrice(double price) { this.price = price; }</span>
+
+<span class="fc" id="L78">    public Set&lt;Integer&gt; getBookedSeats() { return bookedSeats; }</span>
+<span class="fc" id="L79">    public void setBookedSeats(Set&lt;Integer&gt; bookedSeats) { this.bookedSeats = bookedSeats; }</span>
+
+    public boolean isSeatAvailable(Integer seatNumber) {
+<span class="pc bpc" id="L82" title="3 of 8 branches missed.">        return seatNumber != null &amp;&amp; seatNumber &gt;= 1 &amp;&amp; seatNumber &lt;= totalSeats &amp;&amp; !bookedSeats.contains(seatNumber);</span>
+    }
+
+    public void bookSeats(Set&lt;Integer&gt; seats) {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (seats != null) {</span>
+<span class="fc" id="L87">            bookedSeats.addAll(seats);</span>
+<span class="fc" id="L88">            this.availableSeats = totalSeats - bookedSeats.size();</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    public void releaseSeats(Set&lt;Integer&gt; seats) {
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">        if (seats == null || seats.isEmpty()) return;</span>
+<span class="fc" id="L94">        bookedSeats.removeAll(seats);</span>
+<span class="fc" id="L95">        availableSeats += seats.size();</span>
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">        if (totalSeats &gt; 0 &amp;&amp; availableSeats &gt; totalSeats) {</span>
+<span class="nc" id="L97">            availableSeats = totalSeats;</span>
+        }
+<span class="fc" id="L99">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L103">        return &quot;Flight{&quot; + &quot;id=&quot; + id + &quot;, airline='&quot; + airline + '\'' + '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

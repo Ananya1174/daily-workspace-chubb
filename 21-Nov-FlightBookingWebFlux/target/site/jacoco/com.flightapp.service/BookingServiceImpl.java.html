@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookingServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.service</a> &gt; <span class="el_source">BookingServiceImpl.java</span></div><h1>BookingServiceImpl.java</h1><pre class="source lang-java linenums">package com.flightapp.service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.flightapp.ResourceNotFoundException;
+import com.flightapp.repository.BookingRepository;
+import com.flightapp.repository.FlightRepository;
+import com.flightapp.request.Booking;
+import com.flightapp.request.BookingResponse;
+import com.flightapp.request.CreateBookingRequest;
+import com.flightapp.request.Flight;
+import com.flightapp.PnrGenerator;
+
+@Service
+@Transactional
+public class BookingServiceImpl implements BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final FlightRepository flightRepository;
+
+<span class="fc" id="L27">    public BookingServiceImpl(BookingRepository bookingRepository, FlightRepository flightRepository) {</span>
+<span class="fc" id="L28">        this.bookingRepository = bookingRepository;</span>
+<span class="fc" id="L29">        this.flightRepository = flightRepository;</span>
+<span class="fc" id="L30">    }</span>
+
+    @Override
+    public BookingResponse createBooking(Long flightId, CreateBookingRequest req) {
+<span class="fc" id="L34">        Flight flight = flightRepository.findById(flightId)</span>
+<span class="pc" id="L35">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Flight not found: &quot; + flightId));</span>
+
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (req.getSeatNumbers().size() != req.getSeats()) {</span>
+<span class="nc" id="L38">            throw new IllegalArgumentException(&quot;seatNumbers size must equal seats&quot;);</span>
+        }
+
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (Integer s : req.getSeatNumbers()) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            if (!flight.isSeatAvailable(s)) {</span>
+<span class="fc" id="L43">                throw new IllegalArgumentException(&quot;Seat &quot; + s + &quot; not available&quot;);</span>
+            }
+<span class="fc" id="L45">        }</span>
+
+<span class="fc" id="L47">        flight.bookSeats(req.getSeatNumbers());</span>
+<span class="fc" id="L48">        flightRepository.save(flight);</span>
+
+<span class="fc" id="L50">        Booking booking = new Booking();</span>
+<span class="fc" id="L51">        booking.setUserEmail(req.getUserEmail());</span>
+<span class="fc" id="L52">        booking.setContactName(req.getContactName());</span>
+<span class="fc" id="L53">        booking.setSeatsBooked(req.getSeats());</span>
+<span class="fc" id="L54">        booking.setSeatNumbers(req.getSeatNumbers());</span>
+<span class="fc" id="L55">        booking.setPassengers(req.getPassengers());</span>
+<span class="fc" id="L56">        booking.setFlight(flight);</span>
+<span class="fc" id="L57">        booking.setBookingTime(LocalDateTime.now());</span>
+<span class="fc" id="L58">        booking.setPnr(generateUniquePnr());</span>
+
+<span class="fc" id="L60">        double price = flight.getPrice() * req.getSeats();</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (req.getReturnFlightId() != null) {</span>
+<span class="nc" id="L62">            Flight ret = flightRepository.findById(req.getReturnFlightId())</span>
+<span class="nc" id="L63">                    .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Return flight not found: &quot; + req.getReturnFlightId()));</span>
+<span class="nc" id="L64">            booking.setReturnFlight(ret);</span>
+<span class="nc" id="L65">            price += ret.getPrice() * req.getSeats();</span>
+        }
+<span class="fc" id="L67">        booking.setTotalPrice(price);</span>
+
+<span class="fc" id="L69">        Booking saved = bookingRepository.save(booking);</span>
+<span class="fc" id="L70">        return BookingResponse.fromEntity(saved);</span>
+    }
+
+    private String generateUniquePnr() {
+        String p;
+<span class="fc" id="L75">        int tries = 0;</span>
+        do {
+<span class="fc" id="L77">            p = PnrGenerator.generatePnr();</span>
+<span class="fc" id="L78">            tries++;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if (tries &gt; 20) break;</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        } while (bookingRepository.findByPnr(p).isPresent());</span>
+<span class="fc" id="L81">        return p;</span>
+    }
+
+    @Override
+    public BookingResponse getByPnr(String pnr) {
+<span class="nc" id="L86">        Booking b = bookingRepository.findByPnr(pnr)</span>
+<span class="nc" id="L87">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Booking not found for PNR: &quot; + pnr));</span>
+<span class="nc" id="L88">        return BookingResponse.fromEntity(b);</span>
+    }
+
+    @Override
+    public List&lt;BookingResponse&gt; getByUserEmail(String email) {
+<span class="nc" id="L93">        return bookingRepository.findByUserEmail(email).stream().map(BookingResponse::fromEntity).toList();</span>
+    }
+
+    @Override
+    public void cancelBooking(String pnr, String requesterEmail) {
+<span class="fc" id="L98">        Booking b = bookingRepository.findByPnr(pnr)</span>
+<span class="pc" id="L99">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Booking not found for PNR: &quot; + pnr));</span>
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (!b.getUserEmail().equalsIgnoreCase(requesterEmail)) {</span>
+<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;Only booking owner can cancel&quot;);</span>
+        }
+
+<span class="fc" id="L105">        LocalDateTime now = LocalDateTime.now();</span>
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">        if (b.getFlight() != null &amp;&amp; Duration.between(now, b.getFlight().getDepartureTime()).toHours() &lt; 24) {</span>
+<span class="fc" id="L107">            throw new IllegalArgumentException(&quot;Cannot cancel within 24 hours of departure&quot;);</span>
+        }
+
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (b.getFlight() != null) {</span>
+<span class="fc" id="L111">            Flight f = b.getFlight();</span>
+<span class="fc" id="L112">            f.releaseSeats(b.getSeatNumbers());</span>
+<span class="fc" id="L113">            flightRepository.save(f);</span>
+        }
+<span class="fc" id="L115">        bookingRepository.delete(b);</span>
+<span class="fc" id="L116">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

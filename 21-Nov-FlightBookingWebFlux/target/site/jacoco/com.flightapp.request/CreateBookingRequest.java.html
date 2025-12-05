@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateBookingRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.request</a> &gt; <span class="el_source">CreateBookingRequest.java</span></div><h1>CreateBookingRequest.java</h1><pre class="source lang-java linenums">package com.flightapp.request;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.Set;
+
+<span class="fc" id="L10">public class CreateBookingRequest {</span>
+    @Email @NotBlank private String userEmail;
+    @NotBlank private String contactName;
+    @Min(1) private int seats;
+    @NotEmpty private List&lt;PassengerInfo&gt; passengers;
+    @NotEmpty private Set&lt;Integer&gt; seatNumbers;
+    private Long returnFlightId; 
+
+<span class="fc" id="L18">    public String getUserEmail() { return userEmail; }</span>
+<span class="fc" id="L19">    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }</span>
+<span class="fc" id="L20">    public String getContactName() { return contactName; }</span>
+<span class="fc" id="L21">    public void setContactName(String contactName) { this.contactName = contactName; }</span>
+<span class="fc" id="L22">    public int getSeats() { return seats; }</span>
+<span class="fc" id="L23">    public void setSeats(int seats) { this.seats = seats; }</span>
+<span class="fc" id="L24">    public List&lt;PassengerInfo&gt; getPassengers() { return passengers; }</span>
+<span class="fc" id="L25">    public void setPassengers(List&lt;PassengerInfo&gt; passengers) { this.passengers = passengers; }</span>
+<span class="fc" id="L26">    public Set&lt;Integer&gt; getSeatNumbers() { return seatNumbers; }</span>
+<span class="fc" id="L27">    public void setSeatNumbers(Set&lt;Integer&gt; seatNumbers) { this.seatNumbers = seatNumbers; }</span>
+<span class="fc" id="L28">    public Long getReturnFlightId() { return returnFlightId; }</span>
+<span class="fc" id="L29">    public void setReturnFlightId(Long returnFlightId) { this.returnFlightId = returnFlightId; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddInventoryRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.request</a> &gt; <span class="el_source">AddInventoryRequest.java</span></div><h1>AddInventoryRequest.java</h1><pre class="source lang-java linenums">package com.flightapp.request;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
+<span class="fc" id="L8">public class AddInventoryRequest {</span>
+    @NotBlank private String airline;
+    private String airlineLogoUrl;
+    @NotBlank private String origin;
+    @NotBlank private String destination;
+    @NotNull private LocalDateTime departureTime;
+    @NotNull private LocalDateTime arrivalTime;
+    @Min(1) private int totalSeats;
+    @Min(0) private double price;
+
+<span class="fc" id="L18">    public String getAirline() { return airline; }</span>
+<span class="fc" id="L19">    public void setAirline(String airline) { this.airline = airline; }</span>
+<span class="fc" id="L20">    public String getAirlineLogoUrl() { return airlineLogoUrl; }</span>
+<span class="fc" id="L21">    public void setAirlineLogoUrl(String airlineLogoUrl) { this.airlineLogoUrl = airlineLogoUrl; }</span>
+<span class="fc" id="L22">    public String getOrigin() { return origin; }</span>
+<span class="fc" id="L23">    public void setOrigin(String origin) { this.origin = origin; }</span>
+<span class="fc" id="L24">    public String getDestination() { return destination; }</span>
+<span class="fc" id="L25">    public void setDestination(String destination) { this.destination = destination; }</span>
+<span class="fc" id="L26">    public LocalDateTime getDepartureTime() { return departureTime; }</span>
+<span class="fc" id="L27">    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }</span>
+<span class="fc" id="L28">    public LocalDateTime getArrivalTime() { return arrivalTime; }</span>
+<span class="fc" id="L29">    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }</span>
+<span class="fc" id="L30">    public int getTotalSeats() { return totalSeats; }</span>
+<span class="fc" id="L31">    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }</span>
+<span class="fc" id="L32">    public double getPrice() { return price; }</span>
+<span class="fc" id="L33">    public void setPrice(double price) { this.price = price; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FlightServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.service</a> &gt; <span class="el_source">FlightServiceImpl.java</span></div><h1>FlightServiceImpl.java</h1><pre class="source lang-java linenums">package com.flightapp.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.flightapp.ResourceNotFoundException;
+import com.flightapp.repository.FlightRepository;
+import com.flightapp.request.Flight;
+
+@Service
+@Transactional
+public class FlightServiceImpl implements FlightService {
+
+    private final FlightRepository flightRepository;
+
+<span class="fc" id="L19">    public FlightServiceImpl(FlightRepository flightRepository) {</span>
+<span class="fc" id="L20">        this.flightRepository = flightRepository;</span>
+<span class="fc" id="L21">    }</span>
+
+    @Override
+    public Flight createFlight(Flight flight) {
+<span class="fc" id="L25">        flight.setAvailableSeats(flight.getTotalSeats());</span>
+<span class="fc" id="L26">        return flightRepository.save(flight);</span>
+    }
+
+    @Override
+    public Flight getById(Long id) {
+<span class="fc" id="L31">        Optional&lt;Flight&gt; o = flightRepository.findById(id);</span>
+<span class="pc" id="L32">        return o.orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Flight not found: &quot; + id));</span>
+    }
+
+    @Override
+    public List&lt;Flight&gt; search(String origin, String destination, LocalDateTime from, LocalDateTime to) {
+<span class="fc" id="L37">        return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(origin, destination, from, to);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

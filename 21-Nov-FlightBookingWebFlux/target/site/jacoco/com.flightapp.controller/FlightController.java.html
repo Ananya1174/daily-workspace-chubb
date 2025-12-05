@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FlightController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlightBookingSystem</a> &gt; <a href="index.source.html" class="el_package">com.flightapp.controller</a> &gt; <span class="el_source">FlightController.java</span></div><h1>FlightController.java</h1><pre class="source lang-java linenums">package com.flightapp.controller;
+
+import java.net.URI;
+import java.util.List;
+
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.flightapp.request.AddInventoryRequest;
+import com.flightapp.request.Flight;
+import com.flightapp.request.FlightSearchRequest;
+import com.flightapp.request.FlightSearchResponse;
+import com.flightapp.service.FlightService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L19">@Slf4j</span>
+@RestController
+@RequestMapping(&quot;/api/v1.0/flight&quot;)
+public class FlightController {
+
+    
+    private final FlightService flightService;
+<span class="fc" id="L26">    public FlightController(FlightService flightService) {</span>
+<span class="fc" id="L27">        this.flightService = flightService;</span>
+<span class="fc" id="L28">    }</span>
+    /**
+     * Add Inventory/Schedule for an airline (Admin)
+     * POST /api/v1.0/flight/airline/inventory/add
+     */
+    @PostMapping(&quot;/airline/inventory/add&quot;)
+    public ResponseEntity&lt;Flight&gt; addInventory(@Valid @RequestBody AddInventoryRequest req) {
+<span class="fc" id="L35">        Flight f = new Flight();</span>
+<span class="fc" id="L36">        f.setAirline(req.getAirline());</span>
+<span class="fc" id="L37">        f.setAirlineLogoUrl(req.getAirlineLogoUrl());</span>
+<span class="fc" id="L38">        f.setOrigin(req.getOrigin());</span>
+<span class="fc" id="L39">        f.setDestination(req.getDestination());</span>
+<span class="fc" id="L40">        f.setDepartureTime(req.getDepartureTime());</span>
+<span class="fc" id="L41">        f.setArrivalTime(req.getArrivalTime());</span>
+<span class="fc" id="L42">        f.setTotalSeats(req.getTotalSeats());</span>
+<span class="fc" id="L43">        f.setAvailableSeats(req.getTotalSeats());</span>
+<span class="fc" id="L44">        f.setPrice(req.getPrice());</span>
+
+<span class="fc" id="L46">        Flight saved = flightService.createFlight(f);</span>
+<span class="fc" id="L47">        log.debug(&quot;Added flight inventory: {}&quot;, saved);</span>
+<span class="fc" id="L48">        return ResponseEntity.created(URI.create(&quot;/api/v1.0/flight/&quot; + saved.getId())).body(saved);</span>
+    }
+
+    /**
+     * Search Flights
+     * POST /api/v1.0/flight/search
+     */
+    @PostMapping(&quot;/search&quot;)
+    public ResponseEntity&lt;List&lt;FlightSearchResponse&gt;&gt; search(@Valid @RequestBody FlightSearchRequest req) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        var from = req.getFrom() != null ? req.getFrom() : java.time.LocalDateTime.now().minusDays(1);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        var to = req.getTo() != null ? req.getTo() : java.time.LocalDateTime.now().plusDays(365);</span>
+        
+<span class="nc" id="L60">        List&lt;Flight&gt; flights = flightService.search(req.getOrigin(), req.getDestination(), from, to);</span>
+
+<span class="nc" id="L62">        List&lt;FlightSearchResponse&gt; resp = flights.stream().map(f -&gt; {</span>
+<span class="nc" id="L63">            FlightSearchResponse r = new FlightSearchResponse();</span>
+<span class="nc" id="L64">            r.setId(f.getId());</span>
+<span class="nc" id="L65">            r.setAirline(f.getAirline());</span>
+<span class="nc" id="L66">            r.setAirlineLogoUrl(f.getAirlineLogoUrl());</span>
+<span class="nc" id="L67">            r.setOrigin(f.getOrigin());</span>
+<span class="nc" id="L68">            r.setDestination(f.getDestination());</span>
+<span class="nc" id="L69">            r.setDepartureTime(f.getDepartureTime());</span>
+<span class="nc" id="L70">            r.setArrivalTime(f.getArrivalTime());</span>
+<span class="nc" id="L71">            r.setAvailableSeats(f.getAvailableSeats());</span>
+<span class="nc" id="L72">            r.setPrice(f.getPrice());</span>
+<span class="nc" id="L73">            return r;</span>
+<span class="nc" id="L74">        }).toList();</span>
+
+<span class="nc" id="L76">        return ResponseEntity.ok(resp);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
