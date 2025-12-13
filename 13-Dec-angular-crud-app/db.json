@@ -1,0 +1,49 @@
+{
+  "users": [
+    {
+      "name": "Bhavana1234",
+      "email": "bhavana@gmail.com",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "name": "Alice",
+      "email": "alice@mail.com"
+    },
+    {
+      "id": "df94",
+      "name": "Ananya Arisenapally",
+      "email": "ananyaarisenapalli@gmail.com"
+    },
+    {
+      "id": "3dc9",
+      "name": "Ananya",
+      "email": "ananyaarisenapalli@gmail.com"
+    },
+    {
+      "id": "4d7a",
+      "name": "john",
+      "email": "john@gmail.com"
+    },
+    {
+      "id": "3fe6",
+      "name": "bhavana",
+      "email": "bhavan@gmail.com"
+    },
+    {
+      "id": "28f4",
+      "name": "jay",
+      "email": "jay@gmail.com"
+    },
+    {
+      "id": "cd2e",
+      "name": "Ananya11",
+      "email": "ananyaarisenapalli@gmail.com"
+    },
+    {
+      "id": "8249",
+      "name": "Rose",
+      "email": "Rose@gmail.com"
+    }
+  ]
+}

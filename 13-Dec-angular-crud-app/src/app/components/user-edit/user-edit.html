@@ -1,0 +1,25 @@
+<h2>Edit User</h2>
+
+<form [formGroup]="form" (ngSubmit)="updateUser()">
+
+  <input
+    type="text"
+    formControlName="name"
+    placeholder="Name"
+  />
+
+  <br><br>
+
+  <input
+    type="email"
+    formControlName="email"
+    placeholder="Email"
+  />
+
+  <br><br>
+
+  <button type="submit">
+    Update
+  </button>
+
+</form>
